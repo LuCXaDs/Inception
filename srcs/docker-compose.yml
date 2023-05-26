@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  web:
+    build: ./requirements/nginx/Dockerfile
+    ports:
+      - 443:443
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    restart: always
+
+  # db:
+  #   build: ./requirements/nginx/Dockerfile
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=your_password
+  #     - MYSQL_DATABASE=your_database
+  #     - MYSQL_USER=your_user
+  #     - MYSQL_PASSWORD=your_password
+  #   restart: always
