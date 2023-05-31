@@ -1,6 +1,7 @@
 version: '3'
 
 services:
+
   nginx:
     container_name: nginx
     build: ./srcs/requirements/nginx/
@@ -12,6 +13,7 @@ services:
       - net 
     restart: always
 
+
   wordpress:
     container_name: wordpress
     build: ./srcs/requirements/wordpress/
@@ -21,18 +23,21 @@ services:
       - net 
     restart: always
 
-  # db:
-  #   build: ./requirements/nginx/Dockerfile
-  #   environment:
-  #     - MYSQL_ROOT_PASSWORD=your_password
-  #     - MYSQL_DATABASE=your_database
-  #     - MYSQL_USER=your_user
-  #     - MYSQL_PASSWORD=your_password
-  #   restart: always
 
+  mariadb:
+    container_name: mariadb
+    build: ./srcs/requirements/mariadb/
+    volumes:
+      - wp:/var/www/html
+    networks:
+      - net 
+    restart: always
+
+# Partages de fichier entre les containers
 volumes:
   wp:
 
+# Permet aux conteneurs de communiquer entre eux sur le réseau avec "driver: bridge"
 networks:
   net:
     name: net
