@@ -16,4 +16,4 @@ RUN apt-get install -y mariadb-server mariadb-client
 RUN rm -rf /var/lib/apt/lists/*
 
 # Exécute la commande mysql en arrière plan
-CMD ["/usr/sbin/mysql","--nodaemonize"]
+CMD ["mysql"]
