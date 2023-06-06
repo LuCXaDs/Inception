@@ -7,35 +7,55 @@ services:
     build: ./srcs/requirements/nginx/
     ports:
       - 443:443
-    volumes:
-      - wp:/var/www/html
+    # volumes:
+    #   - wp:/var/www/html
     networks:
       - net 
     restart: always
-
 
   wordpress:
     container_name: wordpress
     build: ./srcs/requirements/wordpress/
+    ports:
+      - 9000:9000
     volumes:
       - wp:/var/www/html
     networks:
       - net 
     restart: always
-
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
 
   mariadb:
     container_name: mariadb
     build: ./srcs/requirements/mariadb/
+    ports:
+      - 3306:3306
     volumes:
-      - wp:/var/www/html
+      - db_data:/var/lib/mysql
     networks:
       - net 
     restart: always
+    env_file:
+      - .env
+
 
 # Partages de fichier entre les containers
-volumes:
+volumes: 
   wp:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: "/home/luserbu/data/wordpress"
+  db_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: "/home/luserbu/data/mariadb"
 
 # Permet aux conteneurs de communiquer entre eux sur le réseau avec "driver: bridge"
 networks:

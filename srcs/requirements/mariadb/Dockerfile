@@ -30,3 +30,11 @@ RUN chmod +x /run/script/init.sh
 
 # Définir le point d'entrée pour exécuter le script d'initialisation
 ENTRYPOINT ["/run/script/init.sh"]
+
+# COPY ./tools/mariadb.sh /usr/local/bin/
+# COPY ./conf/wordpress.sql /usr/local/bin/
+# RUN chmod +x /usr/local/bin/mariadb.sh
+# RUN chmod +x /usr/local/bin/wordpress.sql
+
+# Le container peux se lancer dans toutes les adresses IPV4
+CMD ["mysqld", "--bind-address=0.0.0.0"]
