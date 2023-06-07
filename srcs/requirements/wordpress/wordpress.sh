@@ -30,26 +30,36 @@
 # --role="subscriber" \
 # --user_pass={$USER_PASSWORD}
 
-cd /var/www/html/
+sleep 10
+if[! -f /var/www/html/wp-config.php ]; then
+ mkdir -p /var/www/html;
 
-wp core download --allow-root
+ curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar;
+ chmod +x wp-cli.phar;
+ mv wp-cli.phar /usr/local/bin/wp;
 
-cp wp-config-sample.php wp-config.php
-sed -i "s/database_name_here/${DB_DATABASE}/" wp-config.php;
-sed -i "s/username_here/${DB_USER}/" wp-config.php;
-sed -i "s/password_here/${DB_ROOT_PASSWORD}/" wp-config.php;
-sed -i "s/localhost/${HOSTNAME}/" wp-config.php;
+ cd /var/www/html
 
-# Configuration du admin USER
-wp core install --allow-root \
---url=${DOMAIN_NAME} \
---title="LUCAS QUI" \
---admin_user=${ADMIN_USER} \
---admin_password=${ADMIN_PASSWORD} \
---admin_email=${ADMIN_EMAIL} 
+ wp core download --allow-root
 
-# Configuration du USER
-wp user create --allow-root $USER_NAME $USER_EMAIL \
---send-email=${USER_EMAIL} \
---role="subscriber" \
---user_pass=${USER_PASSWORD}
+ cp wp-config-sample.php wp-config.php
+
+ sed -i "s/database_name_here/${DB_DATABASE}/" wp-config.php;
+ sed -i "s/username_here/${DB_USER}/" wp-config.php;
+ sed -i "s/password_here/${DB_ROOT_PASSWORD}/" wp-config.php;
+ sed -i "s/localhost/${HOSTNAME}/" wp-config.php;
+
+ # Configuration du admin USER
+ wp core install --allow-root \
+ --url=${DOMAIN_NAME} \
+ --title="LUCAS QUI" \
+ --admin_user=${ADMIN_USER} \
+ --admin_password=${ADMIN_PASSWORD} \
+ --admin_email=${ADMIN_EMAIL} 
+
+ # Configuration du USER
+ wp user create --allow-root $USER_NAME $USER_EMAIL \
+ --user_pass=${USER_PASSWORD}
+fi
+
+exec "$@"

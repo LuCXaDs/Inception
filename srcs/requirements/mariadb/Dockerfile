@@ -7,7 +7,7 @@ EXPOSE 3306
 RUN apt-get update
 
 # Installation de MARIADB
-RUN apt-get install -y mariadb-server mariadb-client
+RUN apt-get install -y mariadb-server 
 
 # # COPY my.cnf /etc/mysql/my.cnf
 

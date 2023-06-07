@@ -1,67 +1,92 @@
-# Création de l'environnement
+# # Création de l'environnement
+# FROM debian:buster
+
+# # Ouverture d'un port unique
+# EXPOSE 9000
+
+# RUN apt-get update
+
+# RUN apt-get install -y vim
+
+# # Installation de PHP version 7.3
+# RUN apt-get install -y php7.3
+
+# # Installation de PHP-MSQL : fait la laison entre PHP et les base de données MYSQL
+# RUN apt-get install -y php-mysql
+
+# # Installation de PHP-FPM : permet de traiter les requêtes PHP
+# RUN apt-get install -y php-fpm
+
+# RUN apt-get install -y 	curl \
+# 	bash \
+# 	php \
+# 	php-cgi \
+# 	php-mysql \
+# 	php-fpm \
+#     mariadb-client \
+# 	php-pdo \
+# 	php-gd php-cli \
+# 	php-mbstring 
+
+# # Création du dossier HTML
+# RUN mkdir -p /var/www/html
+
+# # Configuration de wordpress
+# RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+#     chmod +x wp-cli.phar && \
+#     mv wp-cli.phar /usr/local/bin/wp
+
+# # Configuration du répertoire de travail
+# # WORKDIR /var/www/html
+
+# # Téléchargement de WordPress avec WP-CLI : permet de gerer les installation de plugin, gestion des utilisateurs...
+# # RUN wp core download --allow-root
+
+# # Change les propriétés d'un répertoire ou d'un fichier
+# RUN chmod 755 /var/www/*
+
+# RUN mkdir -p /run/php && mkdir -p /run/script
+
+# # Modifie la configuration de PHP-FPM pour qu'il écoute sur le port 9000
+# RUN sed -i 's/listen = .*/listen = 9000/' /etc/php/7.3/fpm/pool.d/www.conf
+
+# # Supprime les fichier après l'installation des paquets pour réduire la taille de l'image du conteneur
+# RUN rm -rf /var/lib/apt/lists/*
+
+# COPY wordpress.sh /run/script/wordpress.sh
+
+# # Donnez les droits d'exécution au script
+# RUN chmod +x /run/script/wordpress.sh
+
+# # CMD ["sleep", "infinity"]
+
+# # Définir le point d'entrée pour exécuter le script d'initialisation
+# ENTRYPOINT ["/run/script/wordpress.sh"]
+
+# # Exécute la commande php-fpm en version 7.3 en arrière plan
+# CMD ["/usr/sbin/php-fpm7.3", "--nodaemonize"]
+
+
 FROM debian:buster
 
-# Ouverture d'un port unique
 EXPOSE 9000
 
 RUN apt-get update
+ 
+RUN apt-get install -y  php7.3 php-mysql php-fpm curl mariadb-client
 
-RUN apt-get install -y vim
+COPY wordpress.sh ./wordpress.sh
 
-# Installation de PHP version 7.3
-RUN apt-get install -y php7.3
+RUN chmod +x ./wordpress.sh
 
-# Installation de PHP-MSQL : fait la laison entre PHP et les base de données MYSQL
-RUN apt-get install -y php-mysql
+RUN chown -R www-data:www-data /var/www/*
 
-# Installation de PHP-FPM : permet de traiter les requêtes PHP
-RUN apt-get install -y php-fpm
+RUN chmod 775 /var/www/*
 
-RUN apt-get install -y 	curl \
-	bash \
-	php \
-	php-cgi \
-	php-mysql \
-	php-fpm \
-    mariadb-client \
-	php-pdo \
-	php-gd php-cli \
-	php-mbstring 
+RUN sed -i "s/listen = \/run\/php\/php7.3-fpm.sock/listen = 9000/" "/etc/php/7.3/fpm/pool.d/www.conf";
 
-# Création du dossier HTML
-RUN mkdir -p /var/www/html
+# RUN rm -rf /var/lib/apt/lists/*
 
-# Configuration de wordpress
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
-    chmod +x wp-cli.phar && \
-    mv wp-cli.phar /usr/local/bin/wp
+ENTRYPOINT ["./wordpress.sh"]
 
-# Configuration du répertoire de travail
-# WORKDIR /var/www/html
-
-# Téléchargement de WordPress avec WP-CLI : permet de gerer les installation de plugin, gestion des utilisateurs...
-# RUN wp core download --allow-root
-
-# Change les propriétés d'un répertoire ou d'un fichier
-RUN chmod 755 /var/www/*
-
-RUN mkdir -p /run/php
-
-# Modifie la configuration de PHP-FPM pour qu'il écoute sur le port 9000
-RUN sed -i 's/listen = .*/listen = 9000/' /etc/php/7.3/fpm/pool.d/www.conf
-
-# Supprime les fichier après l'installation des paquets pour réduire la taille de l'image du conteneur
-RUN rm -rf /var/lib/apt/lists/*
-
-COPY wordpress.sh /run/script/wordpress.sh
-
-# Donnez les droits d'exécution au script
-RUN chmod +x /run/script/wordpress.sh
-
-# CMD ["sleep", "infinity"]
-
-# Définir le point d'entrée pour exécuter le script d'initialisation
-ENTRYPOINT ["/run/script/wordpress.sh"]
-
-# Exécute la commande php-fpm en version 7.3 en arrière plan
 CMD ["/usr/sbin/php-fpm7.3", "--nodaemonize"]
