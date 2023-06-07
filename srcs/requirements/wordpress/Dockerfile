@@ -75,18 +75,22 @@ RUN apt-get update
  
 RUN apt-get install -y  php7.3 php-mysql php-fpm curl mariadb-client
 
-COPY wordpress.sh ./wordpress.sh
+COPY wordpress.sh /var/www/wordpress.sh
 
-RUN chmod +x ./wordpress.sh
+RUN mkdir -p /run/php
+
+RUN chmod +x /var/www/wordpress.sh
 
 RUN chown -R www-data:www-data /var/www/*
 
 RUN chmod 775 /var/www/*
 
+RUN touch /run/php/php7.3-fpm.pid
+
 RUN sed -i "s/listen = \/run\/php\/php7.3-fpm.sock/listen = 9000/" "/etc/php/7.3/fpm/pool.d/www.conf";
 
 # RUN rm -rf /var/lib/apt/lists/*
 
-ENTRYPOINT ["./wordpress.sh"]
+ENTRYPOINT ["/var/www/wordpress.sh"]
 
 CMD ["/usr/sbin/php-fpm7.3", "--nodaemonize"]

@@ -7,8 +7,8 @@ services:
     build: ./srcs/requirements/nginx/
     ports:
       - 443:443
-    # volumes:
-    #   - wp:/var/www/html
+    volumes:
+      - wp:/var/www/html
     networks:
       - net 
     restart: always
@@ -46,12 +46,14 @@ services:
 volumes: 
   wp:
     driver: local
+    name: wp
     driver_opts:
       type: 'none'
       o: 'bind'
       device: "/home/luserbu/data/wordpress"
   db_data:
     driver: local
+    name: db_data
     driver_opts:
       type: 'none'
       o: 'bind'
