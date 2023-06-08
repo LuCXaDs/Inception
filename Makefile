@@ -1,23 +1,17 @@
 build:
-	mkdir -p /home/luserbu/data/wordpress /home/luserbu/data/mariadb
-	docker compose -f srcs/docker-compose.yml build
-
-start:
-	docker compose -f srcs/docker-compose.yml up -d --build
+	docker compose -f srcs/docker-compose.yml build 
 
 stop:
 	docker compose -f srcs/docker-compose.yml down
 
-restart: stop volume start
+start:
+	docker compose -f srcs/docker-compose.yml up -d
 
-volume: 
-	docker volume prune -af
-	docker volume rm wp
-	docker volume rm db_data
+clean:
+	docker system prune -af && docker volume rm db wp && docker network prune -f && \
+	sudo rm -rf /home/luserbu/data/mariadb/* && \
+	sudo rm -rf /home/luserbu/data/wordpress/*
 
-clean: stop volume
-	docker system prune -af
-	rm -rf home/luserbu/data/mariadb/*
-	rm -rf home/luserbu/data/wordpress/*
+fclean: stop clean
 
 re: stop clean start
