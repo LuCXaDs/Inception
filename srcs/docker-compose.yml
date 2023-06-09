@@ -7,43 +7,40 @@ services:
     build: ./requirements/nginx
     ports:
       - "443:443"
-    depends_on:
-      - wordpress
     volumes:
       - wp:/var/www/html
     networks:
-      - inception_network
+      - net
+    depends_on:
+      - wordpress
     restart: always
 
   wordpress:
     container_name: wordpress
     build: ./requirements/wordpress
+    volumes:
+      - wp:/var/www/html
+    networks:
+      - net
     env_file:
       - .env
     depends_on:
       - mariadb
-    volumes:
-      - wp:/var/www/html
-    networks:
-      - inception_network
     restart: always
 
   mariadb:
     container_name: mariadb
     build: ./requirements/mariadb
-    env_file:
-      - .env
     volumes:
       - db:/var/lib/mysql
     networks:
-      - inception_network
+      - net
+    env_file:
+      - .env
     restart: always
 
-networks: 
-  inception_network:
-    name: inception_network
-    driver: bridge
 
+# Partages de fichier entre les containers
 volumes:
   wp:
     driver: local
@@ -59,3 +56,9 @@ volumes:
       type: none
       o: bind
       device: /home/luserbu/data/mariadb
+
+# Permet aux conteneurs de communiquer entre eux sur le meme réseau avec "driver: bridge"
+networks:
+  net:
+    name: netception
+    driver: bridge
