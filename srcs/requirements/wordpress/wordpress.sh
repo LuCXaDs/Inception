@@ -31,8 +31,6 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 		--admin_user=${ADMIN_NAME} \
 		--admin_password=${ADMIN_PASSWORD} \
 		--admin_email=${ADMIN_EMAIL}
-
-	# wp user create --allow-root ${ADMIN_NAME} ${ADMIN_EMAIL} --user_pass=${ADMIN_PASSWORD} --role="administrator";
 	
 	# Création d'un user
 	wp user create --allow-root ${USER_NAME} ${USER_EMAIL} --user_pass=${USER_PASSWORD} --role="subscriber";
